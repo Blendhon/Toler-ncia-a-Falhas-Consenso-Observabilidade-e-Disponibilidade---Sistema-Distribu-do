@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servico
+  namespace: trabalho-sis-dis
+  labels:
+    app: servico
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: servico
+  template:
+    metadata:
+      labels:
+        app: servico
+    spec:
+      containers:
+        - name: servico
+          image: servico:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: PROCESSING_DELAY_MS
+              value: "100"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "150m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: servico
+  namespace: trabalho-sis-dis
+spec:
+  selector:
+    app: servico
+  ports:
+    - port: 5001
+      targetPort: 5001

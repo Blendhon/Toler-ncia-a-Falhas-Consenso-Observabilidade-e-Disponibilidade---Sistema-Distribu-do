@@ -1,0 +1,43 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-latency-servico
+  namespace: trabalho-sis-dis
+spec:
+  action: delay
+  mode: one
+  selector:
+    namespaces:
+      - trabalho-sis-dis
+    labelSelectors:
+      app: servico
+  delay:
+    latency: "500ms"
+    jitter: "100ms"
+    correlation: "50"
+  duration: "60s"
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-loss-gateway-servico
+  namespace: trabalho-sis-dis
+spec:
+  action: loss
+  mode: one
+  selector:
+    namespaces:
+      - trabalho-sis-dis
+    labelSelectors:
+      app: gateway
+  loss:
+    loss: "30"
+    correlation: "25"
+  target:
+    mode: one
+    selector:
+      namespaces:
+        - trabalho-sis-dis
+      labelSelectors:
+        app: servico
+  duration: "30s"

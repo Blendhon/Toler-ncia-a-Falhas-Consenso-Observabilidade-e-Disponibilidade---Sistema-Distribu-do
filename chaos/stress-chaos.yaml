@@ -1,0 +1,17 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: stress-cpu-servico
+  namespace: trabalho-sis-dis
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - trabalho-sis-dis
+    labelSelectors:
+      app: servico
+  stressors:
+    cpu:
+      workers: 2
+      load: 80
+  duration: "45s"
