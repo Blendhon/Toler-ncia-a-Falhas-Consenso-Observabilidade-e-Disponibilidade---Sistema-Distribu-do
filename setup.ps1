@@ -113,8 +113,9 @@ if ($?) {
     Write-Host "  [ERRO] Falha ao aplicar HPA" -ForegroundColor Red
 }
 
-Write-Host "`n=== (9/12) Aplicando experimentos de caos ===" -ForegroundColor Cyan
-kubectl apply -f chaos/
+Write-Host "`n=== (9/12) Validando manifests de caos ===" -ForegroundColor Cyan
+kubectl apply -f chaos/ --dry-run=client 2>$null
+if ($?) { Write-Host "  Manifests de caos validados (serao aplicados pela apresentacao)" -ForegroundColor Green }
 
 Write-Host "`n=== (10/12) Deploy do monitoring stack ===" -ForegroundColor Cyan
 kubectl apply -f k8s/grafana-secret.yaml
