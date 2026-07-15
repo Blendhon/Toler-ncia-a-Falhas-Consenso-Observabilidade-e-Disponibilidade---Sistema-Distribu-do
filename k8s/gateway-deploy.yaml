@@ -14,6 +14,10 @@ spec:
     metadata:
       labels:
         app: gateway
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5000"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: gateway
@@ -32,6 +36,16 @@ spec:
               value: "3"
             - name: CIRCUIT_BREAKER_RECOVERY
               value: "10"
+            - name: ENABLE_CB
+              value: "true"
+            - name: ENABLE_RETRY
+              value: "true"
+            - name: ENABLE_TIMEOUT
+              value: "true"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
           resources:
             requests:
               memory: "128Mi"
@@ -39,6 +53,13 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "300m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 12
           livenessProbe:
             httpGet:
               path: /health

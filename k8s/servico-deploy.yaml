@@ -14,6 +14,10 @@ spec:
     metadata:
       labels:
         app: servico
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5001"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: servico
@@ -35,6 +39,13 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "300m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 12
           livenessProbe:
             httpGet:
               path: /health

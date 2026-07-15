@@ -1,0 +1,904 @@
+﻿{
+    "summary":  {
+                    "results_summary":  {
+                                            "network_chaos":  "OK=0 Degraded=15 Error=0 CB=CLOSED",
+                                            "pod_chaos":  "OK=15 Degraded=0 Error=0 CB=CLOSED mode=one",
+                                            "stress_chaos":  "OK=15 Degraded=0 Error=0 CB=CLOSED HPA_scales=False"
+                                        },
+                    "total_experiments":  3,
+                    "final_status":  "SISTEMA RECUPERADO",
+                    "architecture":  {
+                                         "monitoring":  "Prometheus + Grafana + Redis Exporter",
+                                         "hpa":  "min=2, max=5, target=50% CPU, 70% memory",
+                                         "redis":  "Cache (TTL 30s)",
+                                         "servico":  "Flask (2 replicas, HPA min=2 max=5) - Redis Cache",
+                                         "gateway":  "Flask (2 replicas, HPA min=2 max=5) - Circuit Breaker + Retry + Timeout"
+                                     },
+                    "fault_tolerance":  {
+                                            "replicas":  "2 por componente (HPA 2-5)",
+                                            "retry":  "3 tentativas, backoff linear 0.5s*attempt",
+                                            "circuit_breaker":  "3 falhas -\u003e OPEN, recovery 10s",
+                                            "timeout":  "2s per request"
+                                        }
+                },
+    "timestamp":  "2026-07-15 13:30:32",
+    "experiments":  [
+                        {
+                            "request_results":  {
+                                                    "error":  0,
+                                                    "degraded":  0,
+                                                    "p95_ms":  6,
+                                                    "ok":  15,
+                                                    "total":  15,
+                                                    "avg_ms":  5.87
+                                                },
+                            "hpa":  [
+                                        {
+                                            "name":  "gateway-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  1,
+                                                                                                 "averageValue":  "1m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  54,
+                                                                                                 "averageValue":  "71892Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        },
+                                        {
+                                            "name":  "servico-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  0,
+                                                                                                 "averageValue":  "1m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  46,
+                                                                                                 "averageValue":  "61308Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        }
+                                    ],
+                            "pods":  [
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "gateway-7df6dd8599-cp47z",
+                                             "app":  "gateway"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "gateway-7df6dd8599-h8htk",
+                                             "app":  "gateway"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "grafana-7ff7d48c99-wrftk",
+                                             "app":  "grafana"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "prometheus-6c8cd969dc-w2c6t",
+                                             "app":  "prometheus"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "redis-55f8784fcf-ntcjb",
+                                             "app":  "redis"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "redis-exporter-664cd4dcc-wf2zg",
+                                             "app":  "redis-exporter"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "servico-c684ffb84-9pqcc",
+                                             "app":  "servico"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "servico-c684ffb84-dcp7p",
+                                             "app":  "servico"
+                                         }
+                                     ],
+                            "description":  "Estado estavel - sem ataque",
+                            "pod_counts_before":  {
+                                                      "total":  8,
+                                                      "servico":  2,
+                                                      "gateway":  2
+                                                  },
+                            "config":  "N/A",
+                            "phase":  "baseline",
+                            "metrics":  {
+                                            "circuit_breaker_state":  "CLOSED",
+                                            "circuit_breaker_failures":  0,
+                                            "gateway_errors":  {
+
+                                                               },
+                                            "gateway_forwards":  {
+                                                                     "count":  67,
+                                                                     "status":  "success"
+                                                                 },
+                                            "gateway_retries":  {
+
+                                                                }
+                                        }
+                        },
+                        {
+                            "description":  "Falha de rede - latencia 3000ms + perda 30%",
+                            "config":  {
+                                           "mode":  "all",
+                                           "duration":  "300s",
+                                           "latency":  "3000ms",
+                                           "jitter":  "500ms",
+                                           "correlation":  "50%",
+                                           "loss":  "30%"
+                                       },
+                            "request_results":  {
+                                                    "error":  0,
+                                                    "degraded":  15,
+                                                    "p95_ms":  7514,
+                                                    "ok":  0,
+                                                    "total":  15,
+                                                    "avg_ms":  2408.13
+                                                },
+                            "metrics":  {
+                                            "circuit_breaker_state":  "CLOSED",
+                                            "circuit_breaker_failures":  2,
+                                            "gateway_errors":  [
+                                                                   {
+                                                                       "count":  21,
+                                                                       "type":  "request_error"
+                                                                   },
+                                                                   {
+                                                                       "count":  10,
+                                                                       "type":  "fallback"
+                                                                   },
+                                                                   {
+                                                                       "count":  6,
+                                                                       "type":  "timeout"
+                                                                   }
+                                                               ],
+                                            "gateway_forwards":  [
+                                                                     {
+                                                                         "count":  21,
+                                                                         "status":  "error"
+                                                                     },
+                                                                     {
+                                                                         "count":  63,
+                                                                         "status":  "success"
+                                                                     },
+                                                                     {
+                                                                         "count":  6,
+                                                                         "status":  "timeout"
+                                                                     }
+                                                                 ],
+                                            "gateway_retries":  [
+                                                                    {
+                                                                        "count":  21,
+                                                                        "result":  "error"
+                                                                    },
+                                                                    {
+                                                                        "count":  6,
+                                                                        "result":  "timeout"
+                                                                    }
+                                                                ]
+                                        },
+                            "hpa":  [
+                                        {
+                                            "name":  "gateway-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  1,
+                                                                                                 "averageValue":  "2m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  54,
+                                                                                                 "averageValue":  "71948Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        },
+                                        {
+                                            "name":  "servico-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  0,
+                                                                                                 "averageValue":  "1m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  46,
+                                                                                                 "averageValue":  "61340Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        }
+                                    ],
+                            "phase":  "network_chaos",
+                            "pods":  [
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "gateway-7df6dd8599-cp47z",
+                                             "app":  "gateway"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "gateway-7df6dd8599-h8htk",
+                                             "app":  "gateway"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "grafana-7ff7d48c99-wrftk",
+                                             "app":  "grafana"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "prometheus-6c8cd969dc-w2c6t",
+                                             "app":  "prometheus"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "redis-55f8784fcf-ntcjb",
+                                             "app":  "redis"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "redis-exporter-664cd4dcc-wf2zg",
+                                             "app":  "redis-exporter"
+                                         },
+                                         {
+                                             "restarts":  1,
+                                             "status":  "Running",
+                                             "name":  "servico-c684ffb84-9pqcc",
+                                             "app":  "servico"
+                                         },
+                                         {
+                                             "restarts":  1,
+                                             "status":  "Running",
+                                             "name":  "servico-c684ffb84-dcp7p",
+                                             "app":  "servico"
+                                         }
+                                     ]
+                        },
+                        {
+                            "pods_after":  [
+                                               {
+                                                   "restarts":  0,
+                                                   "status":  "Running",
+                                                   "name":  "gateway-7df6dd8599-cp47z",
+                                                   "app":  "gateway"
+                                               },
+                                               {
+                                                   "restarts":  0,
+                                                   "status":  "Running",
+                                                   "name":  "gateway-7df6dd8599-h8htk",
+                                                   "app":  "gateway"
+                                               },
+                                               {
+                                                   "restarts":  0,
+                                                   "status":  "Running",
+                                                   "name":  "grafana-7ff7d48c99-wrftk",
+                                                   "app":  "grafana"
+                                               },
+                                               {
+                                                   "restarts":  0,
+                                                   "status":  "Running",
+                                                   "name":  "prometheus-6c8cd969dc-w2c6t",
+                                                   "app":  "prometheus"
+                                               },
+                                               {
+                                                   "restarts":  0,
+                                                   "status":  "Running",
+                                                   "name":  "redis-55f8784fcf-ntcjb",
+                                                   "app":  "redis"
+                                               },
+                                               {
+                                                   "restarts":  0,
+                                                   "status":  "Running",
+                                                   "name":  "redis-exporter-664cd4dcc-wf2zg",
+                                                   "app":  "redis-exporter"
+                                               },
+                                               {
+                                                   "restarts":  2,
+                                                   "status":  "Running",
+                                                   "name":  "servico-c684ffb84-9pqcc",
+                                                   "app":  "servico"
+                                               },
+                                               {
+                                                   "restarts":  1,
+                                                   "status":  "Running",
+                                                   "name":  "servico-c684ffb84-dcp7p",
+                                                   "app":  "servico"
+                                               }
+                                           ],
+                            "description":  "Falha de instancia - 1 pod do servico (mode:one)",
+                            "hpa":  [
+                                        {
+                                            "name":  "gateway-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  1,
+                                                                                                 "averageValue":  "2m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  55,
+                                                                                                 "averageValue":  "72150Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        },
+                                        {
+                                            "name":  "servico-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  15,
+                                                                                                 "averageValue":  "23m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  46,
+                                                                                                 "averageValue":  "61032Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        }
+                                    ],
+                            "config":  {
+                                           "mode":  "one",
+                                           "duration":  "30s",
+                                           "target":  "servico",
+                                           "action":  "pod-failure"
+                                       },
+                            "pod_counts_before":  {
+                                                      "total":  8,
+                                                      "servico":  2,
+                                                      "gateway":  2
+                                                  },
+                            "request_results":  {
+                                                    "error":  0,
+                                                    "degraded":  0,
+                                                    "p95_ms":  508,
+                                                    "ok":  15,
+                                                    "total":  15,
+                                                    "avg_ms":  46
+                                                },
+                            "phase":  "pod_chaos",
+                            "pod_counts_after":  {
+                                                     "total":  8,
+                                                     "servico":  2,
+                                                     "gateway":  2
+                                                 },
+                            "metrics":  {
+                                            "circuit_breaker_state":  "CLOSED",
+                                            "circuit_breaker_failures":  2,
+                                            "gateway_errors":  [
+                                                                   {
+                                                                       "count":  20,
+                                                                       "type":  "request_error"
+                                                                   },
+                                                                   {
+                                                                       "count":  9,
+                                                                       "type":  "fallback"
+                                                                   },
+                                                                   {
+                                                                       "count":  3,
+                                                                       "type":  "timeout"
+                                                                   }
+                                                               ],
+                                            "gateway_forwards":  [
+                                                                     {
+                                                                         "count":  20,
+                                                                         "status":  "error"
+                                                                     },
+                                                                     {
+                                                                         "count":  83,
+                                                                         "status":  "success"
+                                                                     },
+                                                                     {
+                                                                         "count":  3,
+                                                                         "status":  "timeout"
+                                                                     }
+                                                                 ],
+                                            "gateway_retries":  [
+                                                                    {
+                                                                        "count":  20,
+                                                                        "result":  "error"
+                                                                    },
+                                                                    {
+                                                                        "count":  3,
+                                                                        "result":  "timeout"
+                                                                    }
+                                                                ]
+                                        },
+                            "pods_before":  [
+                                                {
+                                                    "restarts":  0,
+                                                    "status":  "Running",
+                                                    "name":  "gateway-7df6dd8599-cp47z",
+                                                    "app":  "gateway"
+                                                },
+                                                {
+                                                    "restarts":  0,
+                                                    "status":  "Running",
+                                                    "name":  "gateway-7df6dd8599-h8htk",
+                                                    "app":  "gateway"
+                                                },
+                                                {
+                                                    "restarts":  0,
+                                                    "status":  "Running",
+                                                    "name":  "grafana-7ff7d48c99-wrftk",
+                                                    "app":  "grafana"
+                                                },
+                                                {
+                                                    "restarts":  0,
+                                                    "status":  "Running",
+                                                    "name":  "prometheus-6c8cd969dc-w2c6t",
+                                                    "app":  "prometheus"
+                                                },
+                                                {
+                                                    "restarts":  0,
+                                                    "status":  "Running",
+                                                    "name":  "redis-55f8784fcf-ntcjb",
+                                                    "app":  "redis"
+                                                },
+                                                {
+                                                    "restarts":  0,
+                                                    "status":  "Running",
+                                                    "name":  "redis-exporter-664cd4dcc-wf2zg",
+                                                    "app":  "redis-exporter"
+                                                },
+                                                {
+                                                    "restarts":  1,
+                                                    "status":  "Running",
+                                                    "name":  "servico-c684ffb84-9pqcc",
+                                                    "app":  "servico"
+                                                },
+                                                {
+                                                    "restarts":  1,
+                                                    "status":  "Running",
+                                                    "name":  "servico-c684ffb84-dcp7p",
+                                                    "app":  "servico"
+                                                }
+                                            ]
+                        },
+                        {
+                            "description":  "Falha de recurso - sobrecarga CPU 100% com HPA",
+                            "cpu_usage":  [
+                                              {
+                                                  "cpu_cores":  0.008,
+                                                  "pod":  "grafana-7ff7d48c99-wrftk"
+                                              },
+                                              {
+                                                  "cpu_cores":  0.0021,
+                                                  "pod":  "redis-exporter-664cd4dcc-wf2zg"
+                                              },
+                                              {
+                                                  "cpu_cores":  0.0084,
+                                                  "pod":  "prometheus-6c8cd969dc-w2c6t"
+                                              },
+                                              {
+                                                  "cpu_cores":  0.0032,
+                                                  "pod":  "redis-55f8784fcf-ntcjb"
+                                              },
+                                              {
+                                                  "cpu_cores":  0.0013,
+                                                  "pod":  "gateway-7df6dd8599-cp47z"
+                                              },
+                                              {
+                                                  "cpu_cores":  0.0014,
+                                                  "pod":  "gateway-7df6dd8599-h8htk"
+                                              },
+                                              {
+                                                  "cpu_cores":  0.0789,
+                                                  "pod":  "servico-c684ffb84-dcp7p"
+                                              },
+                                              {
+                                                  "cpu_cores":  0.0465,
+                                                  "pod":  "servico-c684ffb84-9pqcc"
+                                              }
+                                          ],
+                            "config":  {
+                                           "duration":  "45s",
+                                           "cpu_load":  100,
+                                           "cpu_workers":  2,
+                                           "mode":  "all"
+                                       },
+                            "pods":  [
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "gateway-7df6dd8599-cp47z",
+                                             "app":  "gateway"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "gateway-7df6dd8599-h8htk",
+                                             "app":  "gateway"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "grafana-7ff7d48c99-wrftk",
+                                             "app":  "grafana"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "prometheus-6c8cd969dc-w2c6t",
+                                             "app":  "prometheus"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "redis-55f8784fcf-ntcjb",
+                                             "app":  "redis"
+                                         },
+                                         {
+                                             "restarts":  0,
+                                             "status":  "Running",
+                                             "name":  "redis-exporter-664cd4dcc-wf2zg",
+                                             "app":  "redis-exporter"
+                                         },
+                                         {
+                                             "restarts":  3,
+                                             "status":  "Running",
+                                             "name":  "servico-c684ffb84-9pqcc",
+                                             "app":  "servico"
+                                         },
+                                         {
+                                             "restarts":  1,
+                                             "status":  "Running",
+                                             "name":  "servico-c684ffb84-dcp7p",
+                                             "app":  "servico"
+                                         }
+                                     ],
+                            "request_results":  {
+                                                    "error":  0,
+                                                    "degraded":  0,
+                                                    "p95_ms":  2165,
+                                                    "ok":  15,
+                                                    "total":  15,
+                                                    "avg_ms":  165.2
+                                                },
+                            "phase":  "stress_chaos",
+                            "pod_counts_after":  {
+                                                     "total":  8,
+                                                     "servico":  2,
+                                                     "gateway":  2
+                                                 },
+                            "metrics":  {
+                                            "circuit_breaker_state":  "CLOSED",
+                                            "circuit_breaker_failures":  0,
+                                            "gateway_errors":  [
+                                                                   {
+                                                                       "count":  19,
+                                                                       "type":  "request_error"
+                                                                   },
+                                                                   {
+                                                                       "count":  10,
+                                                                       "type":  "fallback"
+                                                                   },
+                                                                   {
+                                                                       "count":  6,
+                                                                       "type":  "timeout"
+                                                                   }
+                                                               ],
+                                            "gateway_forwards":  [
+                                                                     {
+                                                                         "count":  19,
+                                                                         "status":  "error"
+                                                                     },
+                                                                     {
+                                                                         "count":  87,
+                                                                         "status":  "success"
+                                                                     },
+                                                                     {
+                                                                         "count":  6,
+                                                                         "status":  "timeout"
+                                                                     }
+                                                                 ],
+                                            "gateway_retries":  [
+                                                                    {
+                                                                        "count":  19,
+                                                                        "result":  "error"
+                                                                    },
+                                                                    {
+                                                                        "count":  6,
+                                                                        "result":  "timeout"
+                                                                    }
+                                                                ]
+                                        },
+                            "hpa":  [
+                                        {
+                                            "name":  "gateway-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  1,
+                                                                                                 "averageValue":  "2m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  54,
+                                                                                                 "averageValue":  "72022Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        },
+                                        {
+                                            "name":  "servico-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  18,
+                                                                                                 "averageValue":  "27m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  46,
+                                                                                                 "averageValue":  "61322Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        }
+                                    ],
+                            "pod_counts_before":  {
+                                                      "total":  8,
+                                                      "servico":  2,
+                                                      "gateway":  2
+                                                  }
+                        },
+                        {
+                            "description":  "Verificacao de recuperacao final",
+                            "request_results":  {
+                                                    "error":  0,
+                                                    "degraded":  0,
+                                                    "p95_ms":  6,
+                                                    "ok":  10,
+                                                    "total":  10,
+                                                    "avg_ms":  5.4
+                                                },
+                            "metrics":  {
+                                            "circuit_breaker_state":  "CLOSED",
+                                            "circuit_breaker_failures":  0,
+                                            "gateway_errors":  [
+                                                                   {
+                                                                       "count":  19,
+                                                                       "type":  "request_error"
+                                                                   },
+                                                                   {
+                                                                       "count":  12,
+                                                                       "type":  "fallback"
+                                                                   },
+                                                                   {
+                                                                       "count":  6,
+                                                                       "type":  "timeout"
+                                                                   }
+                                                               ],
+                                            "gateway_forwards":  [
+                                                                     {
+                                                                         "count":  19,
+                                                                         "status":  "error"
+                                                                     },
+                                                                     {
+                                                                         "count":  96,
+                                                                         "status":  "success"
+                                                                     },
+                                                                     {
+                                                                         "count":  6,
+                                                                         "status":  "timeout"
+                                                                     }
+                                                                 ],
+                                            "gateway_retries":  [
+                                                                    {
+                                                                        "count":  19,
+                                                                        "result":  "error"
+                                                                    },
+                                                                    {
+                                                                        "count":  6,
+                                                                        "result":  "timeout"
+                                                                    }
+                                                                ]
+                                        },
+                            "hpa":  [
+                                        {
+                                            "name":  "gateway-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  1,
+                                                                                                 "averageValue":  "2m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  54,
+                                                                                                 "averageValue":  "72028Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        },
+                                        {
+                                            "name":  "servico-hpa",
+                                            "current_replicas":  2,
+                                            "min":  2,
+                                            "max":  5,
+                                            "desired_replicas":  2,
+                                            "targets":  [
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  165,
+                                                                                                 "averageValue":  "248m"
+                                                                                             },
+                                                                                 "name":  "cpu"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            },
+                                                            {
+                                                                "resource":  {
+                                                                                 "current":  {
+                                                                                                 "averageUtilization":  48,
+                                                                                                 "averageValue":  "63574Ki"
+                                                                                             },
+                                                                                 "name":  "memory"
+                                                                             },
+                                                                "type":  "Resource"
+                                                            }
+                                                        ]
+                                        }
+                                    ],
+                            "phase":  "recovery",
+                            "pod_counts":  {
+                                               "total":  8,
+                                               "servico":  2,
+                                               "gateway":  2
+                                           }
+                        }
+                    ]
+}

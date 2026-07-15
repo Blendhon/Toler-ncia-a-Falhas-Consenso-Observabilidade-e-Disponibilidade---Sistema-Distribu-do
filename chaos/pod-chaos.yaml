@@ -4,11 +4,11 @@ metadata:
   name: pod-kill-servico
   namespace: trabalho-sis-dis
 spec:
-  action: pod-kill
+  action: pod-failure
   mode: one
   selector:
     namespaces:
       - trabalho-sis-dis
     labelSelectors:
       app: servico
-  duration: "10s"
+  duration: "30s"

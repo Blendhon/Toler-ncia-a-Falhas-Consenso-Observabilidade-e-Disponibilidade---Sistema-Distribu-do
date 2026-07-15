@@ -4,7 +4,7 @@ metadata:
   name: stress-cpu-servico
   namespace: trabalho-sis-dis
 spec:
-  mode: one
+  mode: all
   selector:
     namespaces:
       - trabalho-sis-dis
@@ -13,5 +13,5 @@ spec:
   stressors:
     cpu:
       workers: 2
-      load: 80
+      load: 100
   duration: "45s"

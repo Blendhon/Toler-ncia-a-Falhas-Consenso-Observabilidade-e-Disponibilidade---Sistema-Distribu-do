@@ -7,5 +7,13 @@ nodes:
         hostPort: 30000
         listenAddress: "0.0.0.0"
         protocol: TCP
+      - containerPort: 30090
+        hostPort: 30090
+        listenAddress: "0.0.0.0"
+        protocol: TCP
+      - containerPort: 30030
+        hostPort: 30030
+        listenAddress: "0.0.0.0"
+        protocol: TCP
   - role: worker
   - role: worker

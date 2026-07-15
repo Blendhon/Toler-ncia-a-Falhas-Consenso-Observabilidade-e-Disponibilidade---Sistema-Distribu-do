@@ -1,0 +1,385 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: trabalho-sis-dis
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus.trabalho-sis-dis.svc.cluster.local:9090
+        isDefault: true
+        editable: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-provider
+  namespace: trabalho-sis-dis
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        options:
+          path: /var/lib/grafana/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-sistema
+  namespace: trabalho-sis-dis
+  labels:
+    grafana_dashboard: "1"
+data:
+  sistema.json: |
+    {
+      "annotations": { "list": [] },
+      "editable": true,
+      "title": "Sistema Distribuido - Visao Geral",
+      "uid": "sistema-dist",
+      "tags": ["sistemas-distribuidos"],
+      "timezone": "browser",
+      "panels": [
+        {
+          "title": "Request Rate (req/s)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "targets": [
+            {
+              "expr": "sum(rate(gateway_requests_total[1m])) by (status)",
+              "legendFormat": "Gateway {{status}}"
+            },
+            {
+              "expr": "sum(rate(servico_requests_total[1m])) by (status)",
+              "legendFormat": "Servico {{status}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "reqps" }
+          }
+        },
+        {
+          "title": "Latencia Media (s)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "targets": [
+            {
+              "expr": "rate(gateway_request_duration_seconds_sum[1m]) / rate(gateway_request_duration_seconds_count[1m])",
+              "legendFormat": "Gateway"
+            },
+            {
+              "expr": "rate(servico_request_duration_seconds_sum[1m]) / rate(servico_request_duration_seconds_count[1m])",
+              "legendFormat": "Servico"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "s" }
+          }
+        },
+        {
+          "title": "Circuit Breaker State",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 0, "y": 8 },
+          "targets": [
+            {
+              "expr": "gateway_circuit_breaker_state",
+              "legendFormat": "State"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                { "options": { "0": { "text": "CLOSED" } }, "type": "value" },
+                { "options": { "1": { "text": "OPEN" } }, "type": "value" },
+                { "options": { "2": { "text": "HALF_OPEN" } }, "type": "value" }
+              ],
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "red", "value": 1 },
+                  { "color": "yellow", "value": 2 }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "title": "Circuit Breaker Failures",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 6, "y": 8 },
+          "targets": [
+            {
+              "expr": "gateway_circuit_breaker_failures",
+              "legendFormat": "Failures"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 2 },
+                  { "color": "red", "value": 3 }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "title": "Cache Hit Rate (Servico)",
+          "type": "gauge",
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 8 },
+          "targets": [
+            {
+              "expr": "rate(servico_cache_hits_total[1m]) / (rate(servico_cache_hits_total[1m]) + rate(servico_cache_misses_total[1m])) * 100",
+              "legendFormat": "Hit Rate %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "percent", "min": 0, "max": 100 }
+          }
+        },
+        {
+          "title": "Erros por Tipo",
+          "type": "piechart",
+          "gridPos": { "h": 4, "w": 6, "x": 18, "y": 8 },
+          "targets": [
+            {
+              "expr": "sum(gateway_errors_total) by (type)",
+              "legendFormat": "{{type}}"
+            }
+          ]
+        },
+        {
+          "title": "Retries (Gateway)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "targets": [
+            {
+              "expr": "sum(rate(gateway_retries_total[1m])) by (result)",
+              "legendFormat": "{{result}}"
+            }
+          ]
+        },
+        {
+          "title": "Forward Requests (Gateway -> Servico)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "targets": [
+            {
+              "expr": "sum(rate(gateway_forward_requests_total[1m])) by (status)",
+              "legendFormat": "{{status}}"
+            }
+          ]
+        },
+        {
+          "title": "CPU Usage (Container)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{namespace=\"trabalho-sis-dis\", container!=\"POD\", container!=\"\"}[1m])",
+              "legendFormat": "{{pod}} ({{container}})"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "percentunit" }
+          }
+        },
+        {
+          "title": "Memory Usage (Container)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+          "targets": [
+            {
+              "expr": "container_memory_working_set_bytes{namespace=\"trabalho-sis-dis\", container!=\"POD\", container!=\"\"}",
+              "legendFormat": "{{pod}} ({{container}})"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "bytes" }
+          }
+        },
+        {
+          "title": "Redis: Connected Clients",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 8, "x": 0, "y": 28 },
+          "targets": [
+            {
+              "expr": "redis_connected_clients",
+              "legendFormat": "Clients"
+            }
+          ]
+        },
+        {
+          "title": "Redis: Operations/sec",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 8, "x": 8, "y": 28 },
+          "targets": [
+            {
+              "expr": "rate(redis_commands_processed_total[1m])",
+              "legendFormat": "ops/s"
+            }
+          ]
+        },
+        {
+          "title": "Redis: Memory Usage",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 8, "x": 16, "y": 28 },
+          "targets": [
+            {
+              "expr": "redis_memory_used_bytes",
+              "legendFormat": "Used"
+            },
+            {
+              "expr": "redis_memory_max_bytes",
+              "legendFormat": "Max"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "bytes" }
+          }
+        },
+        {
+          "title": "Pod Status (targets UP)",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 8, "x": 0, "y": 34 },
+          "targets": [
+            {
+              "expr": "count(up{job=~\"gateway|servico|redis-exporter\"} == 1)",
+              "legendFormat": "Targets UP"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "title": "Active Containers",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 8, "x": 8, "y": 34 },
+          "targets": [
+            {
+              "expr": "count(container_cpu_usage_seconds_total{namespace=\"trabalho-sis-dis\", container!=\"POD\", container!=\"\"}) by (pod)",
+              "legendFormat": "{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "title": "Active Requests (Servico)",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 8, "x": 16, "y": 34 },
+          "targets": [
+            {
+              "expr": "servico_active_requests",
+              "legendFormat": "Active"
+            }
+          ]
+        }
+      ],
+      "time": { "from": "now-5m", "to": "now" },
+      "refresh": "5s",
+      "schemaVersion": 39
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: trabalho-sis-dis
+  labels:
+    app: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:11.1.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GF_SECURITY_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-credentials
+                  key: GF_SECURITY_ADMIN_USER
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-credentials
+                  key: GF_SECURITY_ADMIN_PASSWORD
+            - name: GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH
+              value: "/var/lib/grafana/dashboards/sistema.json"
+          volumeMounts:
+            - name: datasources
+              mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboards-provider
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: dashboards
+              mountPath: /var/lib/grafana/dashboards
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+      volumes:
+        - name: datasources
+          configMap:
+            name: grafana-datasources
+        - name: dashboards-provider
+          configMap:
+            name: grafana-dashboards-provider
+        - name: dashboards
+          configMap:
+            name: grafana-dashboard-sistema
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: trabalho-sis-dis
+  labels:
+    app: grafana
+spec:
+  type: NodePort
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30030
